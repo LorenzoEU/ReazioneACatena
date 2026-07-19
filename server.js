@@ -28,6 +28,7 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
+app.use(express.static('public'));
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: '*' } // per semplicità di deploy su Render/Railway con dominio dinamico
