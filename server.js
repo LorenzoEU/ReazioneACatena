@@ -28,7 +28,6 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-app.use(express.static('.'));
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: '*' } // per semplicità di deploy su Render/Railway con dominio dinamico
@@ -40,7 +39,8 @@ const LEADERBOARD_FILE = path.join(__dirname, 'leaderboard.json');
 const ROUND_DURATION = 60; // durata del round in secondi
 const MAX_SKIPS = 3;       // skip massimi disponibili al Guessr per partita
 
-
+// Serve i file statici del frontend
+app.use(express.static(path.join(__dirname, 'public')));
 
 // ==================================================================
 // PERSISTENZA: PAROLE (parole.txt -> Set in memoria)
