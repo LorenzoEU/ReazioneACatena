@@ -1,0 +1,17 @@
+{
+  "name": "word-guess-sync-app",
+  "version": "1.0.0",
+  "description": "Gioco sincronizzato a 2 dispositivi (Speaker + Guessr) via WebSocket, con leaderboard e dizionario persistenti su file.",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  }
+}
