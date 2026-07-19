@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Indovina la Parola — Gioco Sincronizzato</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- =============================================================
+     SCHERMATA HOME (comune a entrambi i ruoli, prima di scegliere)
+============================================================== -->
+<div id="screen-home" class="screen active">
+  <div class="home-wrapper">
+    <header class="home-header">
+      <h1>🎯 Indovina la Parola</h1>
+      <p class="subtitle">Gioco sincronizzato Speaker &amp; Guessr in tempo reale</p>
+    </header>
+
+    <div class="home-grid">
+
+      <!-- Colonna sinistra: creazione / accesso partita -->
+      <section class="card">
+        <h2>Inizia a giocare</h2>
+
+        <label for="input-team-name">Nome squadra (opzionale)</label>
+        <input id="input-team-name" type="text" placeholder="Es. I Fenomeni" maxlength="30" />
+
+        <button id="btn-create-room" class="btn btn-primary">
+          🗣️ Crea Partita (Speaker)
+        </button>
+
+        <div class="divider"><span>oppure</span></div>
+
+        <label for="input-room-code">Codice Stanza</label>
+        <input id="input-room-code" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="Es. 1234" />
+
+        <button id="btn-join-room" class="btn btn-secondary">
+          🙋 Partecipa (Guessr)
+        </button>
+
+        <p id="home-error" class="error-text"></p>
+      </section>
+
+      <!-- Colonna centrale: aggiungi parola -->
+      <section class="card">
+        <h2>Aggiungi una parola</h2>
+        <p class="hint">Contribuisci al dizionario condiviso del gioco.</p>
+        <label for="input-new-word">Nuova parola</label>
+        <input id="input-new-word" type="text" placeholder="Es. dinosauro" maxlength="40" />
+        <button id="btn-add-word" class="btn btn-outline">➕ Aggiungi parola</button>
+        <p id="add-word-feedback" class="feedback-text"></p>
+        <p class="hint" id="words-count-label">Parole nel dizionario: —</p>
+      </section>
+
+      <!-- Colonna destra: leaderboard -->
+      <section class="card">
+        <h2>🏆 Leaderboard</h2>
+        <ol id="leaderboard-list" class="leaderboard-list">
+          <li class="leaderboard-empty">Nessun punteggio ancora registrato.</li>
+        </ol>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<!-- =============================================================
+     SCHERMATA SPEAKER — split-screen specchiato (landscape)
+============================================================== -->
+<div id="screen-speaker" class="screen">
+  <div class="speaker-split">
+
+    <!-- METÀ 1 (lettura normale) -->
+    <div class="speaker-half half-normal">
+      <div class="speaker-content">
+        <div class="room-code-tag">Stanza: <span class="js-room-code">----</span></div>
+        <div class="team-name-tag js-team-name"></div>
+        <div class="timer-display js-timer">60</div>
+        <div class="word-display js-word">Premi GENERA</div>
+
+        <div class="controls js-controls-playing">
+          <button class="btn btn-generate js-btn-generate">🎲 GENERA</button>
+        </div>
+
+        <div class="controls js-controls-paused hidden">
+          <p class="controls-label">In pausa — la squadra ha indovinato?</p>
+          <div class="btn-row">
+            <button class="btn btn-correct js-btn-correct">✅ Giusto</button>
+            <button class="btn btn-wrong js-btn-wrong">❌ Sbagliato</button>
+          </div>
+        </div>
+
+        <div class="controls js-controls-timeup hidden">
+          <p class="controls-label">⏰ Tempo scaduto! Ultima parola:</p>
+          <div class="btn-row btn-row-3">
+            <button class="btn btn-correct js-btn-correct-final">✅ Giusto</button>
+            <button class="btn btn-wrong js-btn-wrong-final">❌ Sbagliato</button>
+            <button class="btn btn-neutral js-btn-none-final">➖ Non Risposto</button>
+          </div>
+        </div>
+
+        <div class="score-display">Punteggio: <span class="js-score">0</span></div>
+      </div>
+    </div>
+
+    <!-- METÀ 2 (ruotata 180° per il giocatore dal lato opposto del tavolo) -->
+    <div class="speaker-half half-rotated">
+      <div class="speaker-content">
+        <div class="room-code-tag">Stanza: <span class="js-room-code">----</span></div>
+        <div class="team-name-tag js-team-name"></div>
+        <div class="timer-display js-timer">60</div>
+        <div class="word-display js-word">Premi GENERA</div>
+
+        <div class="controls js-controls-playing">
+          <button class="btn btn-generate js-btn-generate">🎲 GENERA</button>
+        </div>
+
+        <div class="controls js-controls-paused hidden">
+          <p class="controls-label">In pausa — la squadra ha indovinato?</p>
+          <div class="btn-row">
+            <button class="btn btn-correct js-btn-correct">✅ Giusto</button>
+            <button class="btn btn-wrong js-btn-wrong">❌ Sbagliato</button>
+          </div>
+        </div>
+
+        <div class="controls js-controls-timeup hidden">
+          <p class="controls-label">⏰ Tempo scaduto! Ultima parola:</p>
+          <div class="btn-row btn-row-3">
+            <button class="btn btn-correct js-btn-correct-final">✅ Giusto</button>
+            <button class="btn btn-wrong js-btn-wrong-final">❌ Sbagliato</button>
+            <button class="btn btn-neutral js-btn-none-final">➖ Non Risposto</button>
+          </div>
+        </div>
+
+        <div class="score-display">Punteggio: <span class="js-score">0</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="speaker-overlay" class="overlay hidden">
+    <div class="overlay-box">
+      <h2 id="speaker-overlay-title">In attesa del Guessr…</h2>
+      <p id="speaker-overlay-text">Comunica il codice stanza al secondo giocatore.</p>
+      <div class="big-room-code" id="speaker-big-code">----</div>
+    </div>
+  </div>
+</div>
+
+<!-- =============================================================
+     SCHERMATA GUESSR
+============================================================== -->
+<div id="screen-guessr" class="screen">
+  <div class="guessr-wrapper">
+    <div class="room-code-tag">Stanza: <span class="js-room-code">----</span></div>
+    <div class="team-name-tag js-team-name"></div>
+
+    <div class="timer-display guessr-timer js-timer">60</div>
+    <div class="score-display guessr-score">Punteggio: <span class="js-score">0</span></div>
+
+    <button id="btn-pause" class="btn-pause-giant" disabled>
+      ⏸️<br/>PAUSA
+    </button>
+
+    <div id="guessr-skip-area" class="skip-area hidden">
+      <button id="btn-skip" class="btn btn-skip">⏭️ SKIP</button>
+      <p class="skip-counter">Skip usati: <span class="js-skips-used">0</span> / <span class="js-skips-max">3</span></p>
+    </div>
+
+    <p id="guessr-status" class="guessr-status">In attesa che lo Speaker generi una parola…</p>
+  </div>
+
+  <div id="guessr-overlay" class="overlay hidden">
+    <div class="overlay-box">
+      <h2 id="guessr-overlay-title">Connesso alla stanza</h2>
+      <p id="guessr-overlay-text"></p>
+    </div>
+  </div>
+</div>
+
+<!-- =============================================================
+     SCHERMATA FINE PARTITA (comune)
+============================================================== -->
+<div id="screen-gameover" class="screen">
+  <div class="gameover-wrapper">
+    <h1>🏁 Partita Terminata!</h1>
+    <p class="gameover-team js-gameover-team"></p>
+    <div class="gameover-score js-gameover-score">0</div>
+    <p class="hint">Punteggio salvato nella leaderboard.</p>
+    <button id="btn-back-home" class="btn btn-primary">↩️ Torna alla Home</button>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
